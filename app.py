@@ -1,35 +1,93 @@
-import requests
-import json
-import os
+from flask import Flask, jsonify, render_template, request
 
-api_key = os.getenv("API_KEY")
+from chatbot.chatbot import Chatbot
+
+PYTHONANYWHERE_USERNAME = "carvice"
+PYTHONANYWHERE_WEBAPPNAME = "mysite"
+
+app = Flask(__name__)
 
 
-def get_heroes():
-    url = "https://api.opendota.com/api/heroes"
-    response = requests.get(url)
-    data = response.json()
-    file_path = "heroes.json"
-    with open(file_path, "w") as file:
-        json.dump(data, file)
+@app.route("/")
+def index():
+    return "Running. But the URL you used is missing the type_id and user_id path variables."
 
-def get_recent_games(player_id):
-    url = f"https://api.opendota.com/api/players/{player_id}/recentMatches?api_key={api_key}"
-    response = requests.get(url)
-    data = response.json()
-    return data
 
-#use get recent games then turn the enums in the json to the hero names
-def parse_recent_games(player_id):
-    data = get_recent_games(player_id)    
-    with open("heroes.json") as file:
-        heroes = json.load(file)
-    hero_dict = {}
-    for hero in heroes:
-        hero_dict[hero["id"]] = hero["localized_name"]
-    for game in data:
-        game["hero_name"] = hero_dict[game["hero_id"]]
-    with open("recent_games.json", "w") as file:
-        json.dump(data, file)
+@app.route("/<type_id>/<user_id>/chat")
+def chatbot(type_id: str, user_id: str):
+    return render_template("static/index.html")
 
-parse_recent_games(153086719)
+
+@app.route("/<type_id>/<user_id>/info")
+def info_retrieve(type_id: str, user_id: str):
+    bot: Chatbot = Chatbot(
+        database_file="/home/"
+        + PYTHONANYWHERE_USERNAME
+        + "/"
+        + PYTHONANYWHERE_WEBAPPNAME
+        + "/database/chatbot.db",
+        type_id=type_id,
+        user_id=user_id,
+    )
+    response: dict[str, str] = bot.info_retrieve()
+    return jsonify(response)
+
+
+@app.route("/<type_id>/<user_id>/conversation")
+def conversation_retrieve(type_id: str, user_id: str):
+    bot: Chatbot = Chatbot(
+        database_file="/home/"
+        + PYTHONANYWHERE_USERNAME
+        + "/"
+        + PYTHONANYWHERE_WEBAPPNAME
+        + "/database/chatbot.db",
+        type_id=type_id,
+        user_id=user_id,
+    )
+    response: list[dict[str, str]] = bot.conversation_retrieve()
+    return jsonify(response)
+
+
+@app.route("/<type_id>/<user_id>/response_for", methods=["POST"])
+def response_for(type_id: str, user_id: str):
+    user_says = None
+    # content_type = request.headers.get('Content-Type')
+    # if (content_type == 'application/json; charset=utf-8'):
+    user_says = request.json
+    # else:
+    #    return jsonify('/response_for request must have content_type == application/json')
+
+    bot: Chatbot = Chatbot(
+        database_file="/home/"
+        + PYTHONANYWHERE_USERNAME
+        + "/"
+        + PYTHONANYWHERE_WEBAPPNAME
+        + "/database/chatbot.db",
+        type_id=type_id,
+        user_id=user_id,
+    )
+    assistant_says_list: list[str] = bot.respond(user_says)
+    response: dict[str, str] = {
+        "user_says": user_says,
+        "assistant_says": assistant_says_list,
+    }
+    return jsonify(response)
+
+
+@app.route("/<type_id>/<user_id>/reset", methods=["DELETE"])
+def reset(type_id: str, user_id: str):
+    bot: Chatbot = Chatbot(
+        database_file="/home/"
+        + PYTHONANYWHERE_USERNAME
+        + "/"
+        + PYTHONANYWHERE_WEBAPPNAME
+        + "/database/chatbot.db",
+        type_id=type_id,
+        user_id=user_id,
+    )
+    bot.reset()
+    assistant_says_list: list[str] = bot.start()
+    response: dict[str, str] = {
+        "assistant_says": assistant_says_list,
+    }
+    return jsonify(response)
