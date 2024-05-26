@@ -1,10 +1,12 @@
 # Dota 2 Buddy
-This is a school project to familiarize myself with different Machine Learnin tools
+This is a school project to familiarize myself with different Machine Learning tools
 
 ## Problem description
 Dota 2 is an incredibly complex game. Improving is difficult, mainly since it's not immediately obvious to oneself where one needs to imrpove.
 I'm wondering if a LLM would be able to parse over a number of games and give some basic feedback on what you're doing good and what you need to work on.
+If so, this might be a decent tool for beginners to get feedback for their playstyle and start imrpoving from there.
 
+As Plato and Socrates would discuss the allegory of the cave; The shadows in Dota become the players reality. Getting freed of the cave should lead to new insight, even if from a fool. 
 
 # Basic project setup
 ## Data
