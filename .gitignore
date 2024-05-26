@@ -1,2 +1,5 @@
 Notes.txt
 recent_games.json
+__pycache__/app.cpython-312.pyc
+chatbot/__pycache__/chatbot.cpython-312.pyc
+chatbot/__pycache__/persistence.cpython-312.pyc
