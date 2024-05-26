@@ -1,24 +1,35 @@
-from steam.client import SteamClient
-from dota2.client import Dota2Client
-import logging
+import requests
+import json
+import os
 
-logging.basicConfig(format='[%(asctime)s] %(levelname)s %(name)s: %(message)s', level=logging.DEBUG)
+api_key = os.getenv("API_KEY")
 
-client = SteamClient()
-dota = Dota2Client(client)  
 
-@client.on('logged_on')
-def start_dota():
-    dota.launch()
+def get_heroes():
+    url = "https://api.opendota.com/api/heroes"
+    response = requests.get(url)
+    data = response.json()
+    file_path = "heroes.json"
+    with open(file_path, "w") as file:
+        json.dump(data, file)
 
-@dota.on('ready')
-def fetch_profile_card():
-    dota.request_profile_card(76543359)
+def get_recent_games(player_id):
+    url = f"https://api.opendota.com/api/players/{player_id}/recentMatches?api_key={api_key}"
+    response = requests.get(url)
+    data = response.json()
+    return data
 
-@dota.on('profile_card')
-def print_profile_card(account_id, profile_card):
-    if account_id == 76543359:
-        print (profile_card)
+#use get recent games then turn the enums in the json to the hero names
+def parse_recent_games(player_id):
+    data = get_recent_games(player_id)    
+    with open("heroes.json") as file:
+        heroes = json.load(file)
+    hero_dict = {}
+    for hero in heroes:
+        hero_dict[hero["id"]] = hero["localized_name"]
+    for game in data:
+        game["hero_name"] = hero_dict[game["hero_id"]]
+    with open("recent_games.json", "w") as file:
+        json.dump(data, file)
 
-client.cli_login()
-client.run_forever()
+parse_recent_games(153086719)
