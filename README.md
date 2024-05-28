@@ -10,7 +10,16 @@ As Plato and Socrates would discuss the allegory of the cave; The shadows in Dot
 
 # Basic project setup
 ## Data
-Valve (developers behind Dota 2) provides a powerful API where I can get game data given I have a PlayerID. The response is in JSON, which should be parsable by an LLM.
+### Player data
+Game data is being pulled using OpenDota's API. The data is is in JSON format which is slightly formatted to transform the enums into strings. All that's needed is the players ID.
+https://api.opendota.com
+
+
+### Information about the game
+In order to feed the LLM with good information about the game we're using different sources.
+We're scraping howdoiplay.com for detailed information about the heroes and their playstyles.
+We're are also pulling information of professional players from the OpenDota API, which we feed the LLM as examples of good performance. 
+
 
 ## Backend/LLM
 With a prompt that seeks specific feedback from the data the LLM should be able to decipher a number things:
@@ -25,3 +34,10 @@ With a prompt that seeks specific feedback from the data the LLM should be able 
 ## Frontend
 The frontend should be like a chat environment. Once the player provides their PlayerID a larger prompt will return with the information as detailed above.
 After that the user is able to chat about specific things. If the LLM is pretrained with some sound discussion about Dota, it might be able to give decent advice, especially to a very new player.
+
+
+# Project setup
+Following external tools are required in order to recreate this project:
+- Docker (https://www.docker.com/products/docker-desktop/)
+- Ollama (https://ollama.com/)
+- OpenDota API key (https://www.opendota.com/)
