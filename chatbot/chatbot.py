@@ -13,7 +13,7 @@ class Chatbot:
     
     def __init__(self):
         self.model = ChatOllama(model='llama3')
-        self.splitter = RecursiveJsonSplitter(chunk_size=300, chunk_overlap=0)
+        self.splitter = RecursiveJsonSplitter(max_chunk_size=500)
         self.prompt = PromptTemplate.from_template(
             """
             You are a Dota 2 coach. You are here to help the user with their Dota 2 related questions. You analyze the user's recent games and provide feedback.
