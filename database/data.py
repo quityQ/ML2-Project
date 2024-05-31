@@ -18,7 +18,8 @@ class Data:
             with open(file_path, "w") as file:
                 json.dump(data, file)
             print("heroes.json created")
-            
+
+    #get recent games from opendota api
     def get_recent_games(player_id):
         url = f"https://api.opendota.com/api/players/{player_id}/recentMatches?api_key={api_key}"
         response = requests.get(url)
@@ -35,8 +36,7 @@ class Data:
             hero_dict[hero["id"]] = hero["localized_name"]
         for game in data:
             game["hero_name"] = hero_dict[game["hero_id"]]
-        with open("recent_games.json", "w") as file:
-            json.dump(data, file)
+        return data
 
     #remove not needed datapoints
     def clean_up_recent_games():
@@ -80,6 +80,9 @@ class Data:
         with open("database\hero_guides.json", "w") as file:
             json.dump(guide_list, file)
 
-
+    #save data as json
+    def save_as_json(data, file_path):
+        with open(file_path, "w") as file:
+            json.dump(data, file)
 
             
