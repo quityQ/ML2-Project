@@ -7,17 +7,16 @@ from selenium.webdriver.common.by import By
 api_key = os.getenv("API_KEY")
 
 class Data:
+    
+    def __init__(self, player_id):
+        self.player_id = player_id
+        pass
+    
     def get_heroes():
-        if os.path.exists("heroes.json"):
-            print("heroes.json already exists")
-        else:
-            url = "https://api.opendota.com/api/heroes"
-            response = requests.get(url)
-            data = response.json()
-            file_path = "heroes.json"
-            with open(file_path, "w") as file:
-                json.dump(data, file)
-            print("heroes.json created")
+        url = "https://api.opendota.com/api/heroes"
+        response = requests.get(url)
+        data = response.json()
+        return data
 
     #get recent games from opendota api
     def get_recent_games(player_id):
@@ -27,10 +26,9 @@ class Data:
         return data
     
     #use get recent games then turn the enums in the json to the hero names
-    def parse_recent_games(player_id):
+    def parse_recent_games(self, player_id):
         data = Data.get_recent_games(player_id)    
-        with open("heroes.json") as file:
-            heroes = json.load(file)
+        heroes = Data.get_heroes()
         hero_dict = {}
         for hero in heroes:
             hero_dict[hero["id"]] = hero["localized_name"]

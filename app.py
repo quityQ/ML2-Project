@@ -1,11 +1,13 @@
 import streamlit as st
 import os
 import tempfile
-import database.data as data
+from database.data import Data
 from streamlit_chat import message
 from chatbot.chatbot import Chatbot
 
 st.set_page_config(page_title="Chat")
+
+data_instance = Data(player_id=None)
 
 def display_messages():
     st.subheader("Chat")
@@ -27,19 +29,16 @@ def ingestGames():
     st.session_state["ingestion_spinner"].text("Getting recent games...")
 
     with st.spinner("Getting recent games..."):
-        recentGames = data.parse_recent_games(playerID)
+        recentGames = data_instance.parse_recent_games(playerID)
         st.session_state["assistant"].ingest(recentGames)
         pass
 
     st.session_state["ingestion_spinner"].text("Recent games obtained!")
 
-    st.session_state["assistant"].ingest("recent_games.json")
-
     st.session_state["ingestion_spinner"].empty()
 
     st.session_state["messages"].append(("Welcome to Dota 2 Buddy! How can I help you?", False))
     
-
 def page():
     if len(st.session_state) == 0:
         st.session_state["messages"] = []
@@ -49,6 +48,7 @@ def page():
 
     st.subheader("Enter you Player ID to get started:")
     st.text_input("Enter your player ID", key="playerID", max_chars=9)
+    st.button("Get recent games", on_click=ingestGames)
     
     st.session_state["ingestion_spinner"] = st.empty()
 
