@@ -1,5 +1,6 @@
 from langchain_community.chat_models import ChatOllama
 from langchain_community.vectorstores import Chroma
+from langchain_community.utilities import SQLDatabase
 from langchain_community.embeddings import FastEmbedEmbeddings
 from langchain.text_splitter import RecursiveJsonSplitter
 from langchain_core.prompts import PromptTemplate
@@ -10,6 +11,7 @@ class Chatbot:
     vector_store = None
     retriever = None
     chain = None
+    sql_store = None
     
     def __init__(self):
         self.model = ChatOllama(model='llama3')
@@ -28,10 +30,27 @@ class Chatbot:
             search_type='similarity_score_threshold',
             search_kwargs={
                 "k": 5,
-                "score_threshold": 0.5,
+                "score_threshold": 0.1,
             },
         )
 
+        self.chain = ({"context": self.retriever, "question": RunnablePassthrough()}
+                      | self.prompt
+                      | self.model
+                      | StrOutputParser())
+       
+    def sql_ingest(self, input_data):
+        chunks = self.splitter.create_documents(input_data)
+        
+        sql_store = SQLDatabase.from_documents(documents=chunks)
+        self.retriever = sql_store.as_retriever(
+            search_type='similarity_score_threshold',
+            search_kwargs={
+                "k": 5,
+                "score_threshold": 0.5,
+            },
+        )
+        
         self.chain = ({"context": self.retriever, "question": RunnablePassthrough()}
                       | self.prompt
                       | self.model
