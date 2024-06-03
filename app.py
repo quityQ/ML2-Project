@@ -31,21 +31,31 @@ def ingestGames():
 
     with st.spinner("Getting recent games..."):
         recentGames = data_instance.parse_recent_games(playerID)
-        st.session_state["assistant"].ingest(recentGames)
+        if st.session_state["storage_method"] is False:
+            st.session_state["assistant"].vector_ingest(recentGames)
+        else:
+            st.session_state["assistant"].sql_ingest(recentGames)    
         pass
 
     st.session_state["ingestion_spinner"].text("Recent games obtained!")
 
     st.session_state["ingestion_spinner"].empty()
-    st.session_state["messages"].append(("Welcome to Dota 2 Buddy! Please wait a moment for me to check your recent games.", False))
-    # st.session_state["assistant"].force_query("Here are my recent games. Please provide feedback on my hero choices, my statistics, and my overall performance.")
-    analysis = st.session_state["assistant"].force_query("Here are my recent games. Please provide feedback on my hero choices, my statistics, and my overall performance." + str(recentGames))
-    st.session_state["messages"].append((analysis, False))
+
+def ingestGuides():
+    st.session_state["ingestion_spinner"].text("Loading hero guides...")
+    with st.spinner("Loading hero guides..."):
+        guides = data_instance.get_hero_guides()
+        st.session_state["assistant"].vector_ingest(guides)
+    pass
+    st.session_state["ingestion_spinner"].empty()
 
 def page():
     if len(st.session_state) == 0:
         st.session_state["messages"] = []
         st.session_state["assistant"] = Chatbot()
+
+    st.toggle("Use Vector DB", key="storage_method")
+    st.button("Load Hero Guides", on_click=ingestGuides)
 
     st.header("Dota 2 Buddy")
 
@@ -57,6 +67,8 @@ def page():
 
     display_messages()
     st.text_input("Message", key="user_input", on_change=process_input)
+
+    
 
 
 if __name__ == "__main__":

@@ -55,12 +55,11 @@ class Data:
             json.dump(data, file)
 
     #get hero guides from howdoiplay.com for each hero
-    def get_hero_guides():
+    def get_hero_guides(self):
         url = "https://howdoiplay.com/"
         driver = webdriver.Chrome()
         guide_list = []
         
-
         with open ("database\heroes.json") as file:
             heroes = json.load(file)
         
@@ -75,8 +74,7 @@ class Data:
 
         driver.quit()
 
-        with open("database\hero_guides.json", "w") as file:
-            json.dump(guide_list, file)
+        return guide_list
 
     #save data as json
     def save_as_json(data, file_path):
