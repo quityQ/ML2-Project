@@ -14,6 +14,7 @@ def display_messages():
     for i, (msg, is_user) in enumerate(st.session_state["messages"]):
         message(msg, is_user=is_user, key=str(i))
     st.session_state["thinking_spinner"] = st.empty()
+    st.session_state["user_input"] = ""
 
 def process_input():
     if st.session_state["user_input"] and len(st.session_state["user_input"].strip()) > 0:
@@ -36,9 +37,11 @@ def ingestGames():
     st.session_state["ingestion_spinner"].text("Recent games obtained!")
 
     st.session_state["ingestion_spinner"].empty()
+    st.session_state["messages"].append(("Welcome to Dota 2 Buddy! Please wait a moment for me to check your recent games.", False))
+    # st.session_state["assistant"].force_query("Here are my recent games. Please provide feedback on my hero choices, my statistics, and my overall performance.")
+    analysis = st.session_state["assistant"].force_query("Here are my recent games. Please provide feedback on my hero choices, my statistics, and my overall performance." + str(recentGames))
+    st.session_state["messages"].append((analysis, False))
 
-    st.session_state["messages"].append(("Welcome to Dota 2 Buddy! How can I help you?", False))
-    
 def page():
     if len(st.session_state) == 0:
         st.session_state["messages"] = []
