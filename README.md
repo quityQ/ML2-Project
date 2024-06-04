@@ -43,6 +43,5 @@ After that the user is able to chat about specific things. Since the LLM has acc
 
 # Project setup
 Following external tools are required in order to recreate this project:
-- [Docker](https://www.docker.com/products/docker-desktop/)
 - [Ollama](https://ollama.com/)
 - [OpenDota API key](https://www.opendota.com/)
