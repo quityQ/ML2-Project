@@ -52,19 +52,28 @@ class Data:
         driver = webdriver.Chrome(options=options)
         guide_list = []
         
-        with open ("database\heroes.json") as file:
-            heroes = json.load(file)
-        
-        for hero in heroes:
-            hero_name = hero["localized_name"]
-            driver.get(url + '?' + hero_name)
-            driver.implicitly_wait(1)
-            tips = driver.find_element(by=By.CLASS_NAME, value='tips')
-            content = tips.text
-            guide_dict = {"name": hero_name, "guide": content}
-            guide_list.append(guide_dict)
+        if os.path.exists("database\guides.json"):
+            with open("database\guides.json") as file:
+                guide_list = json.load(file)
 
-        driver.quit()
+        else:
+            with open ("database\heroes.json") as file:
+                heroes = json.load(file)
+            
+            for hero in heroes:
+                hero_name = hero["localized_name"]
+                driver.get(url + '?' + hero_name)
+                driver.implicitly_wait(1)
+                tips = driver.find_element(by=By.CLASS_NAME, value='tips')
+                content = tips.text
+                guide_dict = {"name": hero_name, "guide": content}
+                guide_list.append(guide_dict)
+
+            driver.quit()
+
+            #save the guides to a json file
+            with open("database\guides.json", "w") as file:
+                json.dump(guide_list, file)
 
         return guide_list
             
