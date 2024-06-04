@@ -2,4 +2,4 @@ Notes.txt
 .venv/
 *.pyc
 *.json
-playground.ipynb
+.ipynb_checkpoints
