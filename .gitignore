@@ -1,5 +1,4 @@
 Notes.txt
-recent_games.json
-chromedriver.exe
 .venv/
 *.pyc
+*.json
