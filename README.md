@@ -15,8 +15,7 @@ The goal of the game is to destroy the enemy "Ancient", a structure that's locat
 [Here](https://www.youtube.com/playlist?list=PLwL7E8fRVEdc0tFJlm2AWYhu4ccMk_vDD) is a playlist covering the very basics of Dota 2. 
 
 # Basic project setup
-## Running the project
-Follow the steps in Setup notebook to setup the project to run locally
+
 
 ## Data
 ### Player data
@@ -44,3 +43,6 @@ Once provided the site loads for a bit and the initial answer is generated. In t
 Following external tools are required in order to recreate this project:
 - [Ollama](https://ollama.com/)
 - [OpenDota API key](https://www.opendota.com/)
+
+## Running the project
+Follow the steps in Setup notebook to setup the project to run locally
