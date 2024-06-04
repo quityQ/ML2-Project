@@ -36,28 +36,20 @@ class Data:
             game["hero_name"] = hero_dict[game["hero_id"]]
         return data
 
-    #remove not needed datapoints
-    def clean_up_recent_games():
-        json_file = "recent_games.json"
-        with open(json_file) as file:
-            data = json.load(file)
+    #create list of recent heroes from the parsed recent games
+    def get_recent_heroes(self, player_id):
+        data = self.parse_recent_games(player_id)
+        heroes = []
         for game in data:
-            del game["match_id"]
-            del game["game_mode"]
-            del game["lobby_type"]
-            del game["version"]
-            del game["lane"] #lane information currently broken 26.05.
-            del game["lane_role"]
-            del game["is_roaming"]
-            del game["leaver_status"]
-            del game["party_size"]
-        with open(json_file, "w") as file:
-            json.dump(data, file)
+            heroes.append(game["hero_name"])
+        return heroes
 
     #get hero guides from howdoiplay.com for each hero
     def get_hero_guides(self):
         url = "https://howdoiplay.com/"
-        driver = webdriver.Chrome()
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless")
+        driver = webdriver.Chrome(options=options)
         guide_list = []
         
         with open ("database\heroes.json") as file:
@@ -75,10 +67,4 @@ class Data:
         driver.quit()
 
         return guide_list
-
-    #save data as json
-    def save_as_json(data, file_path):
-        with open(file_path, "w") as file:
-            json.dump(data, file)
-
             
