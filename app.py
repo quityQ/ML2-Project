@@ -1,6 +1,4 @@
 import streamlit as st
-import os
-import tempfile
 from database.data import Data
 from streamlit_chat import message
 from chatbot.chatbot import Chatbot
