@@ -15,30 +15,29 @@ The goal of the game is to destroy the enemy "Ancient", a structure that's locat
 [Here](https://www.youtube.com/playlist?list=PLwL7E8fRVEdc0tFJlm2AWYhu4ccMk_vDD) is a playlist covering the very basics of Dota 2. 
 
 # Basic project setup
+## Running the project
+Follow the steps in Setup notebook to setup the project to run locally
+
 ## Data
 ### Player data
 Game data is being pulled using [OpenDota](https://docs.opendota.com/)'s API. The data is is in JSON format which is parsed over to transform the enums into strings, to make it understandable for the LLM.
-With the predefined recentMatches endpoint, we're able to receive information about the last 20 games of a given player. This will be the main way to get an insight into the player.
+With the predefined recentMatches endpoint, we're able to receive information about the last 20 games of a given player.
+This list is broken down to just the Hero names and is fed to the LLM in an initial prompt
 
 ### Information about the game
 In order to feed the LLM with good information about the game we're using different sources.
 We're scraping ["How do I play?"](howdoiplay.com), a website that hosts practical information about each hero in Dota2, for detailed information about the heroes and their playstyles.
-We're are also pulling information of professional players from the OpenDota API, which we feed the LLM as examples of good performance. 
-
+It's unstructured Data which is ideal for the RAG.
 
 ## Backend/LLM
-With a prompt that seeks specific feedback from the data the LLM should be able to decipher a number things:
-- Successful hero choices
-- Unsuccessful hero choices
-- Heores you've been good against
-- Heroes you've been bad against
-- Your most successful position/role
-- Your least successful position/role
-- Point out specific game elements such as your last hits and warding and commenting on it
+The initial prompt sends the recent 20 hero choices of the player, and asks for some tips.
+Over this prompt the RAG attempts to find information within the data that was scraped.
+Chat history is preserved, meaning that the chatbot should not lose context over the conversation.
 
 ## Frontend
-The frontend should be like a chat environment. Once the player provides their PlayerID a larger prompt will return with the information as detailed above.
-After that the user is able to chat about specific things. Since the LLM has access to decent information about Dota, it might be able to give decent advice, especially to a very new player.
+The frontend is a chat environment created with streamlit
+The user is asked to provide playerID (preferably their own)
+Once provided the site loads for a bit and the initial answer is generated. In the ideal case it be relevant to the players past few heroes.
 
 
 # Project setup
