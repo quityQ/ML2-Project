@@ -14,8 +14,15 @@ class Data:
     
     def get_heroes():
         url = "https://api.opendota.com/api/heroes"
-        response = requests.get(url)
-        data = response.json()
+
+        if os.path.exists("database\heroes.json"):
+            with open("database\heroes.json") as file:
+                data = json.load(file)
+        else:
+            response = requests.get(url)
+            data = response.json()
+            with open("database\heroes.json", "w") as file:
+                json.dump(data, file)
         return data
 
     #get recent games from opendota api
